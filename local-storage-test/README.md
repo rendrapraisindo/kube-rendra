@@ -15,8 +15,18 @@ sudo mkdir /mnt/local-test-pv-01/
 sudo mkdir /mnt/local-test-pv-02/
 ````
 ## Membuat Persistent Volume
-Untuk membuat pv, sesuaikan file [local-test-pv.yaml](local-test-pv.yaml). Sesuaikan di bagian **local path** serta tentukan hostname di bagian **nodeAffinity** untuk tiap-tiap PersistentVolume yang akan kita buat.
-Setelah itu apply ke kubernetes dengan perintah
+Untuk membuat pv, sesuaikan file [local-test-pv.yaml](local-test-pv.yaml).
+Pada file [local-test-pv.yaml](local-test-pv.yaml) kita membuat 4 PersistentVolume, yaitu
+| pv name | hostname | path |
+| --- | --- |  --- |
+| `local-test-pv-0201` | `ren-kube-n0002` | `/mnt/local-test-pv-01/` |
+| `local-test-pv-0202` | `ren-kube-n0002` | `/mnt/local-test-pv-02/` |
+| `local-test-pv-0301` | `ren-kube-n0003` | `/mnt/local-test-pv-01/` |
+| `local-test-pv-0302` | `ren-kube-n0003` | `/mnt/local-test-pv-02/` |
+
+Sesuaikan di bagian **local path** serta tentukan hostname di bagian **nodeAffinity** untuk tiap-tiap PersistentVolume yang akan kita buat. Sesuaikan jumlah PersistentVolume sesuai kebutuhan.
+
+Setelah disesuaikan, silakan apply ke kubernetes dengan perintah
 ````
 kubectl apply -f local-test-pv.yaml
 ````
