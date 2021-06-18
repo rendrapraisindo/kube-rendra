@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql-storage-test
+spec:
+  serviceName: "mysql-storage-service"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-storage-test
+  template:
+    metadata:
+      labels:
+        app: mysql-storage-test
+    spec:
+      containers:
+      - name: test-container
+        image: mysql:latest
+        volumeMounts:
+        - name: mysql-st-vol
+          mountPath: /var/lib/mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: asem
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-st-vol
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "standard"
+      resources:
+        requests:
+          storage: 500Mi
