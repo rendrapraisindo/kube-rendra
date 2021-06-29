@@ -21,7 +21,7 @@ spec:
           mountPath: /var/lib/mysql
         env:
         - name: MYSQL_ROOT_PASSWORD
-          value: asem
+          value: assem
   volumeClaimTemplates:
   - metadata:
       name: mysql-st-vol
@@ -30,4 +30,4 @@ spec:
       storageClassName: "standard"
       resources:
         requests:
-          storage: 500Mi
+          storage: 750Mi
