@@ -33,12 +33,17 @@ spec:
         image: mysql:latest
         volumeMounts:
         - name: mysql-db-vol
-          mountPath: /var/lib/mysqlx # Error kalau pake /var/lib/mysql
+          mountPath: /var/lib/mysql # Error kalau pake /var/lib/mysql
         env:
         - name: MYSQL_ROOT_PASSWORD
           value: P4ssw0rd
         ports:
         - containerPort: 3306
+        livenessProbe:
+          tcpSocket:
+            port: 3306
+          initialDelaySeconds: 30
+          periodSeconds: 30
       securityContext:
         runAsUser: 1000
         fsGroup: 1000
@@ -48,6 +53,7 @@ spec:
       name: mysql-db-vol
     spec:
       accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "default" # harus pakai disk kayaknya
       resources:
         requests:
           storage: 2Gi
