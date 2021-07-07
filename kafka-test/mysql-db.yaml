@@ -1,0 +1,99 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-db-service
+  labels:
+    app: mysql-db
+spec:
+  # type: LoadBalancer
+  ports:
+  - port: 3306
+    targetPort: 3306
+    name: client
+  selector:
+    app: mysql-db
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql-db
+spec:
+  serviceName: "mysql-storage-service"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-db
+  template:
+    metadata:
+      labels:
+        app: mysql-db
+    spec:
+      containers:
+      - name:  mysql-container
+        image: mysql:latest
+        volumeMounts:
+        - name: mysql-db-vol
+          mountPath: /var/lib/mysqlx # Error kalau pake /var/lib/mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: P4ssw0rd
+        ports:
+        - containerPort: 3306
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-db-vol
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 2Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: phpmyadmin-service
+  labels:
+    app: phpmyadmin
+spec:
+  #type: LoadBalancer
+  # Kalau kita udah punya ip public nya. kalo belum kosongin aja, dia akan buat static
+  # loadBalancerIP: 20.198.149.134
+  ports:
+  - port: 80
+    targetPort: 80
+    name: client
+  selector:
+    app: phpmyadmin
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: phpmyadmin-deployment
+  labels:
+    app: phpmyadmin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: phpmyadmin
+  template:
+    metadata:
+      labels:
+        app: phpmyadmin
+    spec:
+      containers:
+      - name: phpmyadmin
+        image: phpmyadmin:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: PMA_HOST
+          value: mysql-db-service
+        - name: PMA_ABSOLUTE_URI
+          value: 'https://pma.az.praisindo.com/'
+        #- name: PMA_ARBITRARY
+        #  value: "1"

@@ -5,11 +5,11 @@ metadata:
   labels:
     app: kafdrop
 spec:
-  type: LoadBalancer
+  #type: LoadBalancer
   # Kalau kita udah punya ip public nya. kalo belum kosongin aja, dia akan buat static
   # loadBalancerIP: 20.198.149.134
   ports:
-  - port: 8008
+  - port: 9000
     targetPort: 9000
     name: client
   selector:
@@ -42,4 +42,4 @@ spec:
         - name: JVM_OPTS
           value: "-Xms32M -Xmx64M"
         - name: SERVER_SERVLET_CONTEXTPATH
-          value: "/"
+          value: "/kafdrop"

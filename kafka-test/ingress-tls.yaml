@@ -1,0 +1,54 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ptp-nginx-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "120"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    #buat sticky session
+    nginx.ingress.kubernetes.io/affinity: 'cookie'
+    # https://docs.microsoft.com/en-us/azure/aks/ingress-tls
+    cert-manager.io/cluster-issuer: letsencrypt
+spec:
+  tls:
+  - hosts:
+    - web.az.praisindo.com
+    - pma.az.praisindo.com
+    secretName: tls-secret
+  rules:
+  - host: web.az.praisindo.com
+    http:
+      paths:
+      - path: /testkafka
+        pathType: Prefix
+        backend:
+          service:
+            name: testkafka-service
+            port:
+              number: 80
+      - path: /kafdrop
+        pathType: Prefix
+        backend:
+          service:
+            name: kafdrop-service
+            port:
+              number: 9000
+      - path: /omsquery
+        pathType: Prefix
+        backend:
+          service:
+            name: omsquery-service
+            port:
+              number: 80
+  - host: pma.az.praisindo.com
+    http:
+      paths: 
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: phpmyadmin-service
+            port:
+              number: 80
+
+
