@@ -1,0 +1,62 @@
+# kubectl rollout history deployment/filetarget-api-deployment
+apiVersion: v1
+kind: Service
+metadata:
+  name: filetarget-api-service
+  labels:
+    app: filetarget-api
+spec:
+  #type: LoadBalancer
+  # Kalau kita udah punya ip public nya. kalo belum kosongin aja, dia akan buat static
+  # loadBalancerIP: 20.198.149.134
+  ports:
+  - port: 80
+    targetPort: 80
+    name: client
+  selector:
+    app: filetarget-api
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: filetarget-api-deployment
+  labels:
+    app: filetarget-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: filetarget-api
+  template:
+    metadata:
+      labels:
+        app: filetarget-api
+    spec:
+      containers:
+      - name: filetarget-api
+        image: praisindo.azurecr.io/filetarget-api:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: PATHBASE
+          value: "/filetarget-api"
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: ConnectionStrings__DBProvider
+          value: MySQL
+        - name: ConnectionStrings__MySQLConnection
+          value: "Server=mysql-db-service;Database=FileTarget;Uid=root;Pwd=P4ssw0rd"
+        livenessProbe:
+          httpGet:
+            path: /liveness
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /readiness
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 20

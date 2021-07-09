@@ -40,6 +40,13 @@ spec:
             name: omsquery-service
             port:
               number: 80
+      - path: /filetarget-api
+        pathType: Prefix
+        backend:
+          service:
+            name: filetarget-api-service
+            port:
+              number: 80
   - host: pma.az.praisindo.com
     http:
       paths: 
