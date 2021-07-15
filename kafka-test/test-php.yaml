@@ -36,3 +36,10 @@ spec:
         image: praisindo.azurecr.io/test/php:latest
         ports:
         - containerPort: 80
+        env:
+        - name: TEST_ENV_VAR
+          value: "ini adalah environment var"
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
