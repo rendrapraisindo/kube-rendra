@@ -1,4 +1,6 @@
 # kubectl rollout history deployment/filetarget-api-deployment
+# kubectl set image deployment/filetarget-api-deployment filetarget-api=praisindo.azurecr.io/filetarget-api:latest
+# kubectl rollout status deployment filetarget-api-deployment
 apiVersion: v1
 kind: Service
 metadata:
@@ -34,7 +36,8 @@ spec:
     spec:
       containers:
       - name: filetarget-api
-        image: praisindo.azurecr.io/filetarget-api:latest
+        image: praisindo.azurecr.io/filetarget-api:929
+        imagePullPolicy: Always
         ports:
         - containerPort: 80
         env:
