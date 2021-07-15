@@ -47,6 +47,23 @@ spec:
             name: filetarget-api-service
             port:
               number: 80
+
+      - path: /cpm
+        pathType: Prefix
+        backend:
+          service:
+            name: cpm-web-service
+            port:
+              number: 80
+
+      - path: /test-php
+        pathType: Prefix
+        backend:
+          service:
+            name: test-php-service
+            port:
+              number: 80
+
   - host: pma.az.praisindo.com
     http:
       paths: 
