@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cpm-api-service
+  labels:
+    app: cpm-api
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+    name: client
+  selector:
+    app: cpm-api
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cpm-api-deployment
+  labels:
+    app: cpm-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cpm-api
+  template:
+    metadata:
+      labels:
+	app: cpm-api
+    spec:
+      containers:
+      - name: cpm-api
+        image: praisindo.azurecr.io/cpm/api
+        ports:
+	- containerPort: 80
+        env:
+	- name: APP_ENV
+          value: local
+        - name: APP_DEBUG
+          value: true
+        - name: APP_TIMEZONE
+          value: UTC
+        - name: DB_CONNECTION
+          value: pgsql
+        - name: DB_HOST
+          value: pgsql-service
+        - name: DB_PORT
+          value: 5432
+        - name: DB_DATABASE
+          value: CPM_DB
+        - name: DB_USERNAME
+          value: postgres
+        - name: DB_PASSWORD
+          value: P4ssw0rd
+        - name: MAIL_DRIVER
+          value: smtp
+        - name: MAIL_HOST
+          value: smtp.gmail.com
+        - name: MAIL_PORT
+          value: 465
+        - name: MAIL_USERNAME
+          value: cpm.praisindo@gmail.com
+        - name: MAIL_PASSWORD
+          value: "'praisindo2020!#@'"
+        - name: MAIL_ENCRYPTION
+          value: ssl
+        - name: MAIL_FROM
+          value: noreply@praisindo.co.id
+        - name: MAIN_URL
+          value: https://cpm.az.praisindo.com
+        - name: API_ASSET
+          value: cpm-assets-service
+        - name: API_UPLOAD
+          value: cpm-assets-service
+        - name: API_PYTHON
+          value: cpm-python-service
