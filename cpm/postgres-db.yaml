@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-db-service
+  labels:
+    app: postgres-db
+spec:
+  # type: LoadBalancer
+  ports:
+  - port: 5432
+    targetPort: 5432
+    name: client
+  selector:
+    app: postgres-db
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-db
+spec:
+  serviceName: "postgres-storage-service"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-db
+  template:
+    metadata:
+      labels:
+        app: postgres-db
+    spec:
+      containers:
+      - name:  postgres-container
+        image: postgres
+        volumeMounts:
+        - name: postgres-db-vol
+          mountPath: /var/lib/postgresql/data 
+        env:
+        - name: POSTGRES_PASSWORD
+          value: P4ssw0rd
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        ports:
+        - containerPort: 5432
+        livenessProbe:
+          tcpSocket:
+            port: 5432
+          initialDelaySeconds: 30
+          periodSeconds: 30
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+
+  volumeClaimTemplates:
+  - metadata:
+      name: postgres-db-vol
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "default" # harus pakai disk kayaknya
+      resources:
+        requests:
+          storage: 4Gi

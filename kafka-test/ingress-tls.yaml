@@ -14,6 +14,7 @@ spec:
   - hosts:
     - web.az.praisindo.com
     - pma.az.praisindo.com
+    - cpm.az.praisindo.com
     secretName: tls-secret
   rules:
   - host: web.az.praisindo.com
@@ -48,14 +49,6 @@ spec:
             port:
               number: 80
 
-      - path: /cpm
-        pathType: Prefix
-        backend:
-          service:
-            name: cpm-web-service
-            port:
-              number: 80
-
       - path: /test-php
         pathType: Prefix
         backend:
@@ -63,6 +56,14 @@ spec:
             name: test-php-service
             port:
               number: 80
+
+      - path: /adminer
+        pathType: Prefix
+        backend:
+          service:
+            name: adminer-service
+            port:
+              number: 8080
 
   - host: pma.az.praisindo.com
     http:
@@ -72,6 +73,17 @@ spec:
         backend:
           service:
             name: phpmyadmin-service
+            port:
+              number: 80
+  
+  - host: cpm.az.praisindo.com
+    http:
+      paths: 
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: cpm-web-service
             port:
               number: 80
 
