@@ -57,14 +57,6 @@ spec:
             port:
               number: 80
 
-      - path: /adminer
-        pathType: Prefix
-        backend:
-          service:
-            name: adminer-service
-            port:
-              number: 8080
-
   - host: pma.az.praisindo.com
     http:
       paths: 
@@ -79,12 +71,27 @@ spec:
   - host: cpm.az.praisindo.com
     http:
       paths: 
-      - pathType: Prefix
-        path: "/"
+      - path: "/"
+        pathType: Prefix
         backend:
           service:
             name: cpm-web-service
             port:
               number: 80
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: cpm-api-service
+            port:
+              number: 80
+
+      - path: /adminer
+        pathType: Prefix
+        backend:
+          service:
+            name: adminer-service
+            port:
+              number: 8080
 
 
